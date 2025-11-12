@@ -2,7 +2,7 @@ import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
   chat: a.conversation({
-    aiModel: a.ai.model("Claude 3.5 Sonnet"),
+    aiModel: a.ai.model("Claude 3.7 Sonnet"),
     systemPrompt: `You are a helpful assistant`,
   })
     .authorization((allow) => allow.owner()),
