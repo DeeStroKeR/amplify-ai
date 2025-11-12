@@ -4,7 +4,7 @@ const schema = a.schema({
   chat: a
     .conversation({
       aiModel: {
-        resourcePath: "arn:aws:bedrock:us-east-1:anthropic:inference-profile/us.anthropic.claude-sonnet-4-5-v1:0",
+        resourcePath: "anthropic.claude-sonnet-4-20250514-v1:0",
       },
 
       systemPrompt: `You are a very helpful assistant`,
