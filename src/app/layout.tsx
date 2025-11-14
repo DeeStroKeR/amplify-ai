@@ -4,10 +4,7 @@ import { ThemeStyle } from "@aws-amplify/ui-react/server";
 import { ConfigureAmplify } from "./ConfigureAmplify";
 import { theme } from "@/theme";
 import { Layout } from "@/components/Layout";
-import { Sidebar } from "@/components/Sidebar";
-import { CreateChat } from "@/components/Sidebar/CreateChat";
-import ThemeToggle from "@/components/ThemeToggle";
-import { LogoutButton } from "@/components/Sidebar/Logout";
+import { ConditionalSidebar } from "@/components/ConditionalSidebar";
 import "./globals.css";
 
 export default function RootLayout({
@@ -24,11 +21,7 @@ export default function RootLayout({
         <Layout>
           <ConfigureAmplify />
 
-          <Sidebar>
-            <LogoutButton />
-            <CreateChat />
-            <ThemeToggle initialValue={colorMode} />
-          </Sidebar>
+          <ConditionalSidebar colorMode={colorMode} />
 
           {children}
         </Layout>

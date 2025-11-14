@@ -1,45 +1,52 @@
 "use client";
 
 import * as React from "react";
-import { ConversationsContext } from "@/providers/ConversationsProvider";
-import { View } from "@aws-amplify/ui-react";
-import { AIConversation } from "@aws-amplify/ui-react-ai";
+import { View, Heading, Card, Flex, Text, Button } from "@aws-amplify/ui-react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const { createConversation } = React.useContext(ConversationsContext);
   const router = useRouter();
-  const [isNavigating, setIsNavigating] = React.useState(false);
-
-  const handleSendMessage = async (message: { content: { text?: string }[] }) => {
-    if (isNavigating) return;
-    setIsNavigating(true);
-    
-    try {
-      const conversation = await createConversation();
-      if (!conversation) {
-        setIsNavigating(false);
-        return;
-      }
-      
-      // Store initial message in sessionStorage for the chat page
-      sessionStorage.setItem(`initial_message_${conversation.id}`, JSON.stringify(message));
-      
-      // Navigate to chat page
-      await router.push(`/chat/${conversation.id}`);
-    } catch (error) {
-      console.error('Error creating conversation:', error);
-      setIsNavigating(false);
-    }
-  };
 
   return (
-    <View padding="large" flex="1">
-      <AIConversation
-        messages={[]}
-        handleSendMessage={handleSendMessage}
-        isLoading={isNavigating}
-      />
+    <View padding="xxl" flex="1">
+      <Flex direction="column" alignItems="center" justifyContent="center" minHeight="60vh">
+        <Heading level={1} marginBottom="xl">Welcome to Amplify AI</Heading>
+        <Text marginBottom="xxl" fontSize="large" textAlign="center">
+          Choose how you'd like to get started
+        </Text>
+
+        <Flex direction="row" gap="large" wrap="wrap" justifyContent="center">
+          <Card
+            variation="outlined"
+            padding="large"
+            onClick={() => router.push('/chat')}
+            style={{ cursor: 'pointer', minWidth: '280px' }}
+          >
+            <Heading level={3} marginBottom="medium">💬 Chat</Heading>
+            <Text marginBottom="medium">
+              Start a conversation with our AI assistant. Get help, ask questions, and explore ideas.
+            </Text>
+            <Button variation="primary" width="100%">
+              Go to Chat
+            </Button>
+          </Card>
+
+          <Card
+            variation="outlined"
+            padding="large"
+            onClick={() => router.push('/eligibility')}
+            style={{ cursor: 'pointer', minWidth: '280px' }}
+          >
+            <Heading level={3} marginBottom="medium">✓ Eligibility Assessment</Heading>
+            <Text marginBottom="medium">
+              Check qualification status by analyzing requirements and answers with AI.
+            </Text>
+            <Button variation="primary" width="100%">
+              Go to Eligibility
+            </Button>
+          </Card>
+        </Flex>
+      </Flex>
     </View>
   );
 }
