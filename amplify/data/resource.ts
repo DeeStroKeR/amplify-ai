@@ -2,9 +2,7 @@ import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a.schema({
   chat: a.conversation({
-    aiModel: {
-      resourcePath: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0',
-    },
+    aiModel: a.ai.model("Claude 3.5 Sonnet"),
     systemPrompt: `You are a helpful assistant`,
   })
     .authorization((allow) => allow.owner()),
