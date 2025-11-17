@@ -40,7 +40,9 @@ const schema = a.schema({
   // .authorization((allow) => allow.authenticated()),
   assessEligibility: a.generation({
     aiModel: {
-      resourcePath: 'us.anthropic.claude-haiku-4-5-20251001-v1:0',
+      // resourcePath: 'us.anthropic.claude-haiku-4-5-20251001-v1:0',
+      // resourcePath: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0'
+      resourcePath: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0'
     },
      systemPrompt: 'You are an eligibility assessment system. Analyze the provided requirements and user answers to determine qualification status.\n\nQUALIFICATION STATUS RULES:\n1. Prequalified - All required questions answered correctly/requirements met\n2. May Qualify - All answered questions are correct, but 1+ questions remain unanswered (no disqualifying answers)\n3. Not Qualified - 1 disqualifying answer - suggest changes to qualify\n4. Rejected - 2+ disqualifying answers OR user confirmed disqualifying answer\n\nRESPONSE FORMAT (JSON ONLY):\n{\n  status: one of Prequalified, May Qualify, Not Qualified, Rejected\n  qualificationScore: 0-100\n  disqualifyingCount: number\n  answeredCount: number\n  totalRequired: number\n  metRequirements: array of strings\n  unmetRequirements: array of strings\n  unansweredRequirements: array of strings\n  recommendations: array of strings\n  reasoning: Brief explanation of the status\n}\n\nAnalyze carefully:\n- Check if each requirement is met based on the answers\n- Count disqualifying answers\n- Identify missing answers\n- Provide actionable recommendations',
   })
