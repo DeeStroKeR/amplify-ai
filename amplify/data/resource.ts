@@ -44,24 +44,25 @@ const schema = a.schema({
       // resourcePath: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0'
       resourcePath: 'us.anthropic.claude-sonnet-4-5-20250929-v1:0'
     },
-     systemPrompt: 'You are an eligibility assessment system. Analyze the provided requirements and user answers to determine qualification status.\n\nQUALIFICATION STATUS RULES:\n1. Prequalified - All required questions answered correctly/requirements met\n2. May Qualify - All answered questions are correct, but 1+ questions remain unanswered (no disqualifying answers)\n3. Not Qualified - 1 disqualifying answer - suggest changes to qualify\n4. Rejected - 2+ disqualifying answers OR user confirmed disqualifying answer\n\nRESPONSE FORMAT (JSON ONLY):\n{\n  status: one of Prequalified, May Qualify, Not Qualified, Rejected\n  qualificationScore: 0-100\n  disqualifyingCount: number\n  answeredCount: number\n  totalRequired: number\n  metRequirements: array of strings\n  unmetRequirements: array of strings\n  unansweredRequirements: array of strings\n  recommendations: array of strings\n  reasoning: Brief explanation of the status\n}\n\nAnalyze carefully:\n- Check if each requirement is met based on the answers\n- Count disqualifying answers\n- Identify missing answers\n- Provide actionable recommendations',
-  })
+     systemPrompt: 'You are an eligibility assessment system for grant applications.\n\nTASK:\n1. Review the Eligibility Criteria provided\n2. Examine the applicant form to identify questions related to eligibility\n3. Evaluate the applicant answers against each criterion\n4. Determine qualification status using the decision tree below\n\nDECISION TREE FOR STATUS:\nStep 1: Check for disqualifying answers\n- If any answer contradicts or fails to meet eligibility criteria then status is Not Qualified\n\nStep 2: If no disqualifying answers, check completion\n- If all eligibility questions are answered AND all criteria are met then status is Prequalified\n- If some eligibility questions are unanswered OR blank OR missing then status is May Qualify\n\nIMPORTANT: An unanswered or blank question is NOT the same as a disqualifying answer. Missing information means May Qualify, wrong information means Not Qualified.\n\nRESPONSE REQUIREMENTS:\n- Return ONLY valid JSON matching the defined schema structure\n- Use double quotes for all strings\n- Do not include markdown formatting or code blocks\n- Status must be exactly one of these three values: Prequalified or May Qualify or Not Qualified\n\nANALYSIS GUIDELINES:\n- Match form questions to eligibility criteria by content and intent\n- Treat empty strings, null values, or missing answers as unanswered not disqualifying\n- Only mark as disqualifying if the answer actively contradicts a requirement\n- For May Qualify status explain what questions need to be answered\n- For Not Qualified status explain which answers are disqualifying and why\n- Provide specific actionable recommendations based on the status',
+})
     .arguments({
       requirements: a.string().array(),
       answers: a.json()
     })
     .returns(
       a.customType({
-        status: a.string(),
-        qualificationScore: a.integer(),
-        disqualifyingCount: a.integer(),
-        answeredCount: a.integer(),
-        totalRequired: a.integer(),
-        metRequirements: a.string().array(),
-        unmetRequirements: a.string().array(),
-        unansweredRequirements: a.string().array(),
-        recommendations: a.string().array(),
-        reasoning: a.string(),
+      status: a.string(),
+      eligibilityQuestionCount: a.integer(),
+      answeredCount: a.integer(),
+      unansweredCount: a.integer(),
+      criteriaMetCount: a.integer(),
+      criteriaMetList: a.string().array(),
+      criteriaNotMetCount: a.integer(),
+      criteriaNotMetList: a.string().array(),
+      disqualifyingAnswersCount: a.integer(),
+      recommendations: a.string().array(),
+      reasoning: a.string(),
       })
     )
     .authorization(allow => allow.authenticated()),
