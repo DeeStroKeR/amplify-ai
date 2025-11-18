@@ -11,13 +11,14 @@ interface Answer {
 
 interface AssessmentResult {
   status: string;
-  qualificationScore: number;
-  disqualifyingCount: number;
+  eligibilityQuestionCount: number;
   answeredCount: number;
-  totalRequired: number;
-  metRequirements: string[];
-  unmetRequirements: string[];
-  unansweredRequirements: string[];
+  unansweredCount: number;
+  criteriaMetCount: number;
+  criteriaMetList: string[];
+  criteriaNotMetCount: number;
+  criteriaNotMetList: string[];
+  disqualifyingAnswersCount: number;
   recommendations: string[];
   reasoning: string;
 }
@@ -203,55 +204,54 @@ export default function EligibilityPage() {
                   <Badge size="small" variation={getStatusColor(result.status)}>
                     {result.status}
                   </Badge>
-                  <Text fontSize="medium" fontWeight="bold">
-                    Score: {result.qualificationScore}/100
-                  </Text>
                 </Flex>
 
                 <View marginBottom="small">
                   <Heading level={6} marginBottom="xs">Summary</Heading>
-                  <Text fontSize="small">{result.reasoning}</Text>
+                  <Text fontSize="small">{result.reasoning || "Assessment complete"}</Text>
                 </View>
 
                 <Flex direction="row" gap="medium" marginBottom="small">
                   <View>
                     <Text fontSize="xs" color="font.tertiary">Answered</Text>
-                    <Text fontSize="medium" fontWeight="bold">{result.answeredCount}/{result.totalRequired}</Text>
+                    <Text fontSize="medium" fontWeight="bold">{result.answeredCount}/{result.eligibilityQuestionCount}</Text>
+                  </View>
+                  <View>
+                    <Text fontSize="xs" color="font.tertiary">Criteria Met</Text>
+                    <Text fontSize="medium" fontWeight="bold" color="green.60">{result.criteriaMetCount}</Text>
                   </View>
                   <View>
                     <Text fontSize="xs" color="font.tertiary">Disqualifying</Text>
-                    <Text fontSize="medium" fontWeight="bold" color="red.60">{result.disqualifyingCount}</Text>
+                    <Text fontSize="medium" fontWeight="bold" color="red.60">{result.disqualifyingAnswersCount}</Text>
                   </View>
                 </Flex>
 
-                {result.metRequirements.length > 0 && (
+                {result.criteriaMetList && result.criteriaMetList.length > 0 && (
                   <View marginBottom="small">
                     <Heading level={6} marginBottom="xs">✓ Met Requirements</Heading>
-                    {result.metRequirements.map((req, idx) => (
+                    {result.criteriaMetList.map((req, idx) => (
                       <Text key={idx} fontSize="small" color="green.60" marginBottom="xxs">• {req}</Text>
                     ))}
                   </View>
                 )}
 
-                {result.unmetRequirements.length > 0 && (
+                {result.criteriaNotMetList && result.criteriaNotMetList.length > 0 && (
                   <View marginBottom="small">
                     <Heading level={6} marginBottom="xs">✗ Unmet Requirements</Heading>
-                    {result.unmetRequirements.map((req, idx) => (
+                    {result.criteriaNotMetList.map((req, idx) => (
                       <Text key={idx} fontSize="small" color="red.60" marginBottom="xxs">• {req}</Text>
                     ))}
                   </View>
                 )}
 
-                {result.unansweredRequirements.length > 0 && (
+                {result.unansweredCount > 0 && (
                   <View marginBottom="small">
-                    <Heading level={6} marginBottom="xs">? Unanswered Requirements</Heading>
-                    {result.unansweredRequirements.map((req, idx) => (
-                      <Text key={idx} fontSize="small" color="orange.60" marginBottom="xxs">• {req}</Text>
-                    ))}
+                    <Heading level={6} marginBottom="xs">? Unanswered Questions</Heading>
+                    <Text fontSize="small" color="orange.60">{result.unansweredCount} eligibility question(s) not answered</Text>
                   </View>
                 )}
 
-                {result.recommendations.length > 0 && (
+                {result.recommendations && result.recommendations.length > 0 && (
                   <View marginTop="small">
                     <Heading level={6} marginBottom="xs">Recommendations</Heading>
                     {result.recommendations.map((rec, idx) => (
